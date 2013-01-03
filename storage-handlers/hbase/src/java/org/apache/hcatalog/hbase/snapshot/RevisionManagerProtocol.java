@@ -17,13 +17,14 @@
  */
 package org.apache.hcatalog.hbase.snapshot;
 
-import org.apache.hadoop.hbase.ipc.CoprocessorProtocol;
+//import org.apache.hadoop.hbase.ipc.CoprocessorProtocol;
 
 /**
  * Interface marker to implement RevisionManager as Coprocessor.
  * (needs to extend CoprocessorProtocol)
  */
-public interface RevisionManagerProtocol extends RevisionManager,
-    CoprocessorProtocol {
+public interface RevisionManagerProtocol extends RevisionManager
+	//, CoprocessorProtocol
+{
 
 }

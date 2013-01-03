@@ -35,7 +35,7 @@
   -->
   <!-- name and version -->
   <property name="_version" value="0.4.1"/>
-  <property name="_vtype" value="-dev"/> 
+  <property name="_vtype" value="-cdh3u5-dev"/> 
   <property name="hcatalog.version" value="${_version}${_vtype}"/>
   <property name="hcatalog.jar" value="${ant.project.name}-${hcatalog.version}.jar"/>
   <property name="final.name" value="${ant.project.name}-${hcatalog.version}" />
@@ -249,7 +249,7 @@
   ================================================================================
   -->
   <!-- Build HCatalog src files -->
-  <target name="compile-src" depends="init">
+  <target name="compile-src" depends="init,jar-guava-r11-shims">
     <javac encoding="${build.encoding}" srcdir="${src.dir}" excludes="${excludes}"
         includes="**/*.java" destdir="${build.classes}" debug="${javac.debug}"
         optimize="${javac.optimize}" target="${javac.version}"
@@ -288,6 +288,17 @@
   ================================================================================
   -->
   <target name="jar" depends="shims,clientjar,server-extensions,jar-storage-handlers,jar-webhcat-java-client"/>
+
+  <!--
+  ================================================================================
+  Build guava shims
+  ================================================================================
+  -->
+
+  <target name="jar-guava-r11-shims">        
+    <ant target="jar" dir="guava-r11-shims" inheritAll="false" useNativeBasedir="true"/>
+  	<copy todir="${ivy.lib.dir}" file="guava-r11-shims/build/guava-r11-shims/guava-r11-shims-0.1.0-r11.jar" />
+  </target>
 
   <!--
   ================================================================================

@@ -41,15 +41,17 @@ public class RevisionManagerEndpointClient implements RevisionManager, Configura
     // conf.set("hbase.ipc.client.connect.max.retries", "0");
     // conf.setInt(HConstants.HBASE_CLIENT_RPC_MAXATTEMPTS, 1);
     clonedConf.setInt(HConstants.HBASE_CLIENT_RETRIES_NUMBER, 1); // do not retry RPC
-    HTable table = new HTable(clonedConf, HConstants.ROOT_TABLE_NAME);
-    rmProxy = table.coprocessorProxy(RevisionManagerProtocol.class,
-        Bytes.toBytes("anyRow"));
-    rmProxy.open();
+    
+    //[shashwat] Useless implementation as revision manager based on coprocessor is not implmeneted in this release  
+    //HTable table = new HTable(clonedConf, HConstants.ROOT_TABLE_NAME);
+    //rmProxy = table.coprocessorProxy(RevisionManagerProtocol.class,
+    //	Bytes.toBytes("anyRow"));
+    //rmProxy.open();
   }
 
   @Override
   public void close() throws IOException {
-    rmProxy.close();
+//    rmProxy.close();
   }
 
   @Override

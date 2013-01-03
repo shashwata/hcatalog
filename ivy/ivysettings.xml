@@ -46,12 +46,14 @@
       <artifact pattern="${repo.dir}/${maven2.pattern.ext}"/>
       <ivy pattern="${repo.dir}/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
     </filesystem>
+
     <ibiblio
       name="jboss"
       m2compatible="true"
       root="https://repository.jboss.org/nexus/content/groups/public"
       pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]" />
 
+    <ibiblio name="cloudera" root="https://repository.cloudera.com/artifactory/cdh-build/" m2compatible="true" />
     <ibiblio name="maven2" root="${repo.maven.org}" pattern="${maven2.pattern.ext}" m2compatible="true"/>
     <ibiblio name="apache-snapshots" root="${repo.apache.snapshots}" pattern="${snapshot.pattern}"
          checkmodified="true" changingPattern=".*-SNAPSHOT" m2compatible="true"/>
@@ -62,6 +64,7 @@
     <chain name="default" dual="true" checkmodified="true" changingPattern=".*-SNAPSHOT">
       <resolver ref="fs"/>
       <resolver ref="local"/>
+      <resolver ref="cloudera"/>
       <resolver ref="maven2"/>
       <resolver ref="datanucleus-repo"/>
       <resolver ref="jboss"/>
@@ -70,10 +73,12 @@
     <chain name="internal">
       <resolver ref="fs"/>
       <resolver ref="apache-snapshots"/>
+      <resolver ref="cloudera"/>
       <resolver ref="maven2"/>
       <resolver ref="datanucleus-repo"/>
     </chain>
     <chain name="external">
+      <resolver ref="cloudera"/>
       <resolver ref="maven2"/>
       <resolver ref="datanucleus-repo"/>
     </chain>

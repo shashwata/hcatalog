@@ -19,12 +19,22 @@
 package org.apache.hcatalog.hbase;
 
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 
-import org.apache.hadoop.hbase.security.User;
+//import org.apache.hadoop.hbase.security.User;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hive.hbase.HBaseSerDe;
 import org.apache.hadoop.mapred.JobConf;
+
+// [shashwat] for Methods class copied from hbase 0.95
+import org.apache.hadoop.fs.CommonConfigurationKeys;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.security.UserGroupInformation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 class HBaseUtil {
 
@@ -146,13 +156,94 @@ class HBaseUtil {
      * @throws IOException
      */
     static void addHBaseDelegationToken(JobConf job) throws IOException {
-        if (User.isHBaseSecurityEnabled(job)) {
+        if (isHBaseSecurityEnabled(job)) {
             try {
-                User.getCurrent().obtainAuthTokenForJob(job);
+                obtainAuthTokenForJob(job);
             } catch (InterruptedException e) {
                 throw new IOException("Error while obtaining hbase delegation token", e);
             }
         }
     }
 
+    //[shashwat] Auth api is only available from hbase version 0.92 org.apache.hadoop.hbase.security.User.isHBaseSecurityEnabled
+    static boolean isHBaseSecurityEnabled(Configuration conf) {
+    	//[shashwat] Code copied from hbase trunk (0.95 SNAPSHOT)
+    	final String HBASE_SECURITY_CONF_KEY = "hbase.security.authentication";
+    	return "kerberos".equalsIgnoreCase(conf.get(HBASE_SECURITY_CONF_KEY)) && "kerberos".equalsIgnoreCase(
+			conf.get(CommonConfigurationKeys.HADOOP_SECURITY_AUTHENTICATION));
+    }
+    
+	//[shashwat] copied from hbase 0.95-SNAPSHOT org.apache.hadoop.hbase.security.User.obtainAuthTokenForJob
+	static void obtainAuthTokenForJob(JobConf job) throws IOException, InterruptedException {
+		try {
+			Class c = Class.forName("org.apache.hadoop.hbase.security.token.TokenUtil");
+			Methods.call(c, null, "obtainTokenForJob", new Class[]{JobConf.class, UserGroupInformation.class},
+					new Object[]{job, UserGroupInformation.getCurrentUser()});
+		} catch (ClassNotFoundException cnfe) {
+			throw new RuntimeException("Failure loading TokenUtil class, is secure RPC available?", cnfe);
+		} catch (IOException ioe) {
+			throw ioe;
+		} catch (InterruptedException ie) {
+			throw ie;
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Exception e) {
+			throw new UndeclaredThrowableException(e, "Unexpected error calling TokenUtil.obtainAndCacheToken()");
+		}
+	}
+	
+
+	//[shashwat] copied from hbase 0.95-SNAPSHOT org.apache.hadoop.hbase.util.Methods
+	static class Methods {
+	  private static Log LOG = LogFactory.getLog(Methods.class);
+
+	  public static <T> Object call(Class<T> clazz, T instance, String methodName,
+	      Class[] types, Object[] args) throws Exception {
+	    try {
+	      Method m = clazz.getMethod(methodName, types);
+	      return m.invoke(instance, args);
+	    } catch (IllegalArgumentException arge) {
+	      LOG.fatal("Constructed invalid call. class="+clazz.getName()+
+	          " method=" + methodName + " types=" + stringify(types), arge);
+	      throw arge;
+	    } catch (NoSuchMethodException nsme) {
+	      throw new IllegalArgumentException(
+	          "Can't find method "+methodName+" in "+clazz.getName()+"!", nsme);
+	    } catch (InvocationTargetException ite) {
+	      // unwrap the underlying exception and rethrow
+	      if (ite.getTargetException() != null) {
+	        if (ite.getTargetException() instanceof Exception) {
+	          throw (Exception)ite.getTargetException();
+	        } else if (ite.getTargetException() instanceof Error) {
+	          throw (Error)ite.getTargetException();
+	        }
+	      }
+	      throw new UndeclaredThrowableException(ite,
+	          "Unknown exception invoking "+clazz.getName()+"."+methodName+"()");
+	    } catch (IllegalAccessException iae) {
+	      throw new IllegalArgumentException(
+	          "Denied access calling "+clazz.getName()+"."+methodName+"()", iae);
+	    } catch (SecurityException se) {
+	      LOG.fatal("SecurityException calling method. class="+clazz.getName()+
+	          " method=" + methodName + " types=" + stringify(types), se);
+	      throw se;
+	    }
+	  }
+	  
+	//[shashwat] copied from hbase 0.95-SNAPSHOT org.apache.hadoop.hbase.util.Classes.stringify
+	  public static String stringify(Class[] classes) {
+		    StringBuilder buf = new StringBuilder();
+		    if (classes != null) {
+		      for (Class c : classes) {
+		        if (buf.length() > 0) {
+		          buf.append(",");
+		        }
+		        buf.append(c.getName());
+		      }
+		    } else {
+		      buf.append("NULL");
+		    }
+		    return buf.toString();
+	  	}	  
+	}
 }

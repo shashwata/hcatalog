@@ -42,12 +42,14 @@
             <param name="hadoop.ivy.dir" value="${shims.0.20.hadoop.ivy.dir}" />
             <param name="shim.name" value="20" />
         </antcall>
+        <!--
         <antcall target="build-shims" inheritRefs="false" inheritAll="false">
             <param name="hadoop.version.ant-internal" value="23" />
             <param name="sources" value="${shims.0.23.sources}" />
             <param name="hadoop.ivy.dir" value="${shims.0.23.hadoop.ivy.dir}" />
             <param name="shim.name" value="23" />
         </antcall>
+        -->
     </target>
 
     <target name="build-shims">

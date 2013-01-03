@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.CoprocessorEnvironment;
-import org.apache.hadoop.hbase.coprocessor.BaseEndpointCoprocessor;
+//import org.apache.hadoop.hbase.CoprocessorEnvironment;
+//import org.apache.hadoop.hbase.coprocessor.BaseEndpointCoprocessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,38 +34,40 @@ import org.slf4j.LoggerFactory;
  * In the case of {@link ZKBasedRevisionManager} now only the region servers need write access to
  * manage revision data.
  */
-public class RevisionManagerEndpoint extends BaseEndpointCoprocessor implements RevisionManagerProtocol {
+
+// [shashwat] Not implemeneted yet, not compatibe with hbase ver < 0.92
+public class RevisionManagerEndpoint /*extends BaseEndpointCoprocessor*/ implements RevisionManagerProtocol {
 
   private static final Logger LOGGER =
 		      LoggerFactory.getLogger(RevisionManagerEndpoint.class.getName());
   
   private RevisionManager rmImpl = null;
 
-  @Override
-  public void start(CoprocessorEnvironment env) {
-    super.start(env);
-    try {
-      Configuration conf = RevisionManagerConfiguration.create(env.getConfiguration());
-      String className = conf.get(RMConstants.REVISION_MGR_ENDPOINT_IMPL_CLASS,
-          ZKBasedRevisionManager.class.getName());
-      LOGGER.debug("Using Revision Manager implementation: {}",className);
-      rmImpl = RevisionManagerFactory.getOpenedRevisionManager(className, conf);
-    } catch (IOException e) {
-      LOGGER.error("Failed to initialize revision manager", e);
-    }
-  }
-
-  @Override
-  public void stop(CoprocessorEnvironment env) {
-    if (rmImpl != null) {
-      try {
-        rmImpl.close();
-      } catch (IOException e) {
-        LOGGER.warn("Error closing revision manager.", e);
-      }
-    }
-    super.stop(env);
-  }
+//  @Override
+//  public void start(CoprocessorEnvironment env) {
+//    super.start(env);
+//    try {
+//      Configuration conf = RevisionManagerConfiguration.create(env.getConfiguration());
+//      String className = conf.get(RMConstants.REVISION_MGR_ENDPOINT_IMPL_CLASS,
+//          ZKBasedRevisionManager.class.getName());
+//      LOGGER.debug("Using Revision Manager implementation: {}",className);
+//      rmImpl = RevisionManagerFactory.getOpenedRevisionManager(className, conf);
+//    } catch (IOException e) {
+//      LOGGER.error("Failed to initialize revision manager", e);
+//    }
+//  }
+//
+//  @Override
+//  public void stop(CoprocessorEnvironment env) {
+//    if (rmImpl != null) {
+//      try {
+//        rmImpl.close();
+//      } catch (IOException e) {
+//        LOGGER.warn("Error closing revision manager.", e);
+//      }
+//    }
+//    super.stop(env);
+//  }
 
   @Override
   public void initialize(Configuration conf) {

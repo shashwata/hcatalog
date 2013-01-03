@@ -1,0 +1,8 @@
+guava_r11_shims
+
+* Introduction
+HCat 0.4.0 relies on google-guava 11.x or later. But most of the hadoop eco (in particular cloudera's chd3u5) is on google-guava r09. This shim lib is a set of sources from guava 11.0.1 that hcat requires over and above guava r09.
+
+* Build
+ant clean jar
+

@@ -18,6 +18,8 @@
 
 package org.apache.hcatalog.hbase.snapshot;
 
+import java.util.Map.Entry;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 
@@ -53,7 +55,17 @@ public class RevisionManagerConfiguration {
     //set on the MR fronted will get loaded on the backend as resouce called job.xml
     //hence adding resources on the backed could potentially overwrite properties
     //set on the frontend which we shouldn't be doing here
-    HBaseConfiguration.merge(conf, that);
+    
+    //[shashwat] see @{link #merge()}
+    // HBaseConfiguration.merge(conf, that);
+    merge(conf, that);
     return conf;
   }
+  
+  //[shashwat] copied from hbase 0.92 org.apache.hadoop.hbase.HBaseConfiguration.java
+  static void merge(Configuration destConf, Configuration srcConf) {
+	for (Entry<String, String> e : srcConf) {
+		destConf.set(e.getKey(), e.getValue());
+		}
+	}
 }
