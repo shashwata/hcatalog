@@ -317,15 +317,9 @@
     Distribution Section
     ===============================================================================
     -->
-    <target name="package" depends="jar, docs" description="Create an HCatalog release">
+    <target name="package" depends="jar" description="Create an HCatalog release">
         <mkdir dir="${dist.dir}" />
-        <!--
-        <mkdir dir="${dist.dir}/conf" />
-        -->
         <mkdir dir="${dist.dir}/lib" />
-        <!--
-        <mkdir dir="${dist.dir}/docs" />
-        -->
 
         <copy todir="${dist.dir}/lib" includeEmptyDirs="false">
             <fileset dir="${lib.dir}" erroronmissingdir="false" />
@@ -334,29 +328,16 @@
             </fileset>
         </copy>
 
-        <!--
-        <copy todir="${dist.dir}/docs">
-            <fileset dir="${build.docs}" />
-        </copy>
-        <copy todir="${dist.dir}/conf">
-            <fileset dir="${basedir}/conf" />
-        </copy>
-        -->
-<!--
-<antcall target="package-to-handlers"/>
--->
+        <antcall target="package-to-dir"/>
     </target>
 
-<!--
-    <target name="package-to-handlers" if="dist.handlers.dir">
-        <mkdir dir="${dist.handlers.dir}/hbase"/>
-        <copy todir="${dist.handlers.dir}/hbase" includeEmptyDirs="true">
+    <target name="package-to-dir" if="dist.guava_r11_shims.dir">
+        <mkdir dir="${dist.guava_r11_shims.dir}"/>
+        <copy todir="${dist.guava_r11_shims.dir}" includeEmptyDirs="true">
             <fileset dir="${dist.dir}">
-              <include name="**/lib/hbase-storage-handler-*.jar"/>
-              <include name="**/conf/**/*"/>
+              <include name="**/lib/guava-r11-shims-*.jar"/>
             </fileset>
         </copy>
     </target>
--->
 
 </project>

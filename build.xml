@@ -564,6 +564,19 @@
     </copy>
   </target>
 
+  <target name="package-guava-r11-shims">
+    <property name="guava_r11_shims.dir" value="${dist.dir}/share/${ant.project.name}/guava-r11-shims"/>
+    <mkdir dir="${guava_r11_shims.dir}"/>
+    <ant target="package" dir="guava-r11-shims" inheritAll="false" useNativeBasedir="true">     
+        <property name="dist.guava_r11_shims.dir" value="${guava_r11_shims.dir}"/>
+    </ant>
+    <copy todir="${dist.dir}/share/${ant.project.name}/lib" includeEmptyDirs="false" flatten="true">
+      <fileset dir="${guava_r11_shims.dir}">
+        <include name="*/lib/*"/>
+      </fileset>
+    </copy>
+  </target>
+
   <target name="package" depends="jar, docs" description="Create an HCatalog release">
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${dist.dir}/share/${ant.project.name}/lib" />
@@ -644,6 +657,7 @@
        <!--package storage-handlers -->
       <antcall target="package-storage-handlers"/>
       <antcall target="package-webhcat-java-client"/>
+      <antcall target="package-guava-r11-shims"/>
     </target>
 
     <target name="releaseaudit" depends="ivy-releaseaudit" description="Release Audit activities">
