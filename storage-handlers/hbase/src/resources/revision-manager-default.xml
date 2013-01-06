@@ -34,7 +34,7 @@
   </property>
   <property>
     <name>revision.manager.zk.dataDir</name>
-    <value>/revision-management</value>
+    <value>/hcatalog/revision-management</value>
     <description>zookeeper base directory</description>
   </property>
   <property>

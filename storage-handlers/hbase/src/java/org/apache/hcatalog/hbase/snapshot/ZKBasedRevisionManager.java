@@ -52,23 +52,24 @@ public class ZKBasedRevisionManager implements RevisionManager{
     public void initialize(Configuration conf) {
         conf = new Configuration(conf);
         if (conf.get(RMConstants.ZOOKEEPER_HOSTLIST) == null) {
-           String zkHostList = conf.get(HConstants.ZOOKEEPER_QUORUM);
-           int port = conf.getInt(HConstants.ZOOKEEPER_CLIENT_PORT,
-                   HConstants.DEFAULT_ZOOKEPER_CLIENT_PORT);
-           String[] splits = zkHostList.split(",");
-           StringBuffer sb = new StringBuffer();
-           for (String split : splits) {
-               sb.append(split);
-               sb.append(':');
-               sb.append(port);
-               sb.append(',');
-           }
-           sb.deleteCharAt(sb.length() - 1);
-           conf.set(RMConstants.ZOOKEEPER_HOSTLIST, sb.toString());
+           String zkHostList = conf.get(HConstants.ZOOKEEPER_QUORUM, "localhost:2181");
+//           int port = conf.getInt(HConstants.ZOOKEEPER_CLIENT_PORT,
+//                   HConstants.DEFAULT_ZOOKEPER_CLIENT_PORT);
+//           String[] splits = zkHostList.split(",");
+//           StringBuffer sb = new StringBuffer();
+//           for (String split : splits) {
+//               sb.append(split);
+//               sb.append(':');
+//               sb.append(port);
+//               sb.append(',');
+//           }
+//           sb.deleteCharAt(sb.length() - 1);
+//           conf.set(RMConstants.ZOOKEEPER_HOSTLIST, sb.toString());
+           conf.set(RMConstants.ZOOKEEPER_HOSTLIST, zkHostList);
         }
         this.zkHostList = conf.get(RMConstants.ZOOKEEPER_HOSTLIST);
-        this.baseDir = conf.get(RMConstants.ZOOKEEPER_DATADIR);
-        this.writeTxnTimeout = Long.parseLong(conf.get(RMConstants.WRITE_TRANSACTION_TIMEOUT));
+        this.baseDir = conf.get(RMConstants.ZOOKEEPER_DATADIR, "/hcatalog/revision-management");
+        this.writeTxnTimeout = Long.parseLong(conf.get(RMConstants.WRITE_TRANSACTION_TIMEOUT, "14400000"));
     }
 
     /**
