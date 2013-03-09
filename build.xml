@@ -49,9 +49,6 @@
     <property name="package.buildroot" value="${build.dir}/rpm/hcatalog_package_build_${user.name}"/>
     <property name="package.build.dir" value="${build.dir}/rpm/hcatalog_package_build_${user.name}/BUILD"/>
 
-    <!-- rats properties -->
-    <property name="rat.reporting.classname" value="rat.Report"/>
-
     <target name="init">
         <mkdir dir="${dist.dir}"/>
     </target>
@@ -95,7 +92,6 @@
         <ant target="test" dir="webhcat/svr" inheritAll="false"/>
         <ant target="test" dir="webhcat/java-client" inheritAll="false"/>
         <ant target="test" dir="storage-handlers/hbase" inheritAll="false"/>
-
         <!-- One checkstyle run for the whole repo. Runs after junit tests
         to piggyback on resolved jars. -->
         <path id="checkstyle.class.path">
@@ -198,9 +194,13 @@
             <classpath>
                 <fileset dir="core/build/lib/compile"/>
                 <fileset dir="hcatalog-pig-adapter/build/lib/compile"/>
+                <fileset dir="hcatalog-pig-adapter/build/lib/provided"/>
                 <fileset dir="server-extensions/build/lib/compile"/>
+                <fileset dir="server-extensions/build/lib/provided"/>
                 <fileset dir="storage-handlers/hbase/build/lib/compile"/>
+                <fileset dir="storage-handlers/hbase/build/lib/provided"/>
                 <fileset dir="webhcat/svr/build/lib/compile"/>
+                <fileset dir="webhcat/svr/build/lib/provided"/>
             </classpath>
             <group title="hcatalog" packages="org.apache.hcatalog.*"/>
         </javadoc>
@@ -292,9 +292,18 @@
             <fileset dir="server-extensions/build">
                 <include name="hcatalog-*.jar"/>
             </fileset>
+        </copy>
+        <copy todir="${dist.dir}/share/webhcat/svr/" includeEmptyDirs="false">
             <fileset dir="webhcat/svr/build">
                 <include name="webhcat-*.jar"/>
             </fileset>
+        </copy>
+        <copy todir="${dist.dir}/share/webhcat/svr/lib/" includeEmptyDirs="false">
+            <fileset dir="webhcat/svr/build/lib/compile/">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${dist.dir}/share/webhcat/java-client/" includeEmptyDirs="false">
             <fileset dir="webhcat/java-client/build">
                 <include name="webhcat-java-client*.jar"/>
             </fileset>
@@ -320,6 +329,10 @@
 
         <copy todir="${dist.dir}/etc/${ant.project.name}">
             <fileset dir="conf"/>
+        </copy>
+
+        <copy todir="${dist.dir}/etc/webhcat">
+            <fileset dir="webhcat/svr/src/main/config/" />
         </copy>
 
         <copy todir="${dist.dir}/share/${ant.project.name}/scripts">
@@ -384,11 +397,20 @@
         <checksum file="${build.dir}/${final.name}.tar.gz" forceOverwrite="yes"/>
     </target>
 
-    <target name="releaseaudit" description="Release Audit activities">
-        <java classname="${rat.reporting.classname}" fork="true">
-            <classpath refid="releaseaudit.classpath"/>
-            <arg value="${basedir}/src"/>
+    <target name="releaseaudit" depends="init" description="generate a release audit report">
+        <get src="${mvnrepo}/org/apache/rat/apache-rat/${apache-rat.version}/apache-rat-${apache-rat.version}.jar"
+             dest="${basedir}/build/apache-rat-${apache-rat.version}.jar"
+             usetimestamp="true"
+             skipexisting="true"/>
+        <java jar="${basedir}/build/apache-rat-${apache-rat.version}.jar"
+              fork="true"
+              output="${basedir}/build/releaseaudit_report.txt">
+            <arg value="--dir"/>
+            <arg value="${basedir}"/>
+            <arg value="--exclude-file"/>
+            <arg value="build-support/conf/rat-excludes.txt"/>
         </java>
+        <echo message="releaseaudit report generated at ${basedir}/build/releaseaudit_report.txt"/>
     </target>
 
     <!-- ================================================================== -->

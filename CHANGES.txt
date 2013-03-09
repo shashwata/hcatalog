@@ -22,18 +22,22 @@ Trunk (unreleased changes)
   INCOMPATIBLE CHANGES
 
   NEW FEATURES
+  HCAT-509 Webhcat security work (thejas via gates)
 
   IMPROVEMENTS
 
   OPTIMIZATIONS
 
   BUG FIXES
+  HCAT-554 Loading data using HCatLoader() from a table on non default namenode fails. (amalakar via avandana)
 
 Release 0.5.0 - Unreleased
 
   INCOMPATIBLE CHANGES
 
   NEW FEATURES
+  HCAT-546 Rework HCatalog's JMS Notifications (mithunr via gates) 
+
   HCAT-364 HCatalog pig adapter should handle boolean fields (traviscrawford)
 
   HCAT-515 Upgrade hadoop23 version to use 0.23.3 (cdrome via toffer)
@@ -55,6 +59,14 @@ Release 0.5.0 - Unreleased
   HCAT-427 Document storage-based authorization (lefty via gates)
 
   IMPROVEMENTS
+  HCAT-604 add flexibility wrt. location of PID/LOG files (rvs via traviscrawford)
+
+  HCAT-602 release notes for hcatalog 0.0.5 (traviscrawford)
+
+  HCAT-595 Update hcatalog hive dependency to 0.10.0 (traviscrawford)
+
+  HCAT-549 rename webhcat config and shell scripts to use webhcat in the names (thejas via gates)
+
   HCAT-446 Enforce apache headers for all HCatalog code (traviscrawford via gates)
 
   HCAT-564 test.sh should let users specify the ant version (traviscrawford)
@@ -168,6 +180,40 @@ Release 0.5.0 - Unreleased
   OPTIMIZATIONS
 
   BUG FIXES
+  HCAT-614 Environment/rpm based configuration for e2e test do not have hcatcoredevlib defined in it (amalakar via toffer) 
+
+  HCAT-601 fix hcatalog dependency resolution issues (sushanth via traviscrawford)
+
+  HCAT-608 exclude data files from hcatalog release audit report (traviscrawford)
+
+  HCAT-606 remove hcatalog test includes/excludes files (traviscrawford)
+
+  HCAT-599 NotificationListener doesn't use getTopic() for sending messages. (mithun via traviscrawford)
+
+  HCAT-605 HCatalog release script does not update version in build.properties (traviscrawford)
+
+  HCAT-603 releaseaudit should run before generating artifacts (traviscrawford)
+
+  HCAT-598 fix setting hcatalog version number via the command-line (traviscrawford)
+
+  HCAT-600 webhcat installation doc incorrectly gives location of start/stop script (gates)
+
+  HCAT-593 webhcat system tests don't work as per the instructions (thejas via gates)
+
+  HCAT-596 fix releaseaudit and automate running (traviscrawford)
+
+  HCAT-587 webhcat controller map task takes too much memory (thejas via traviscrawford)
+
+  HCAT-594 updated documentation, default.xml, job submission fix (thejas via gates)
+
+  HCAT-588 Webhcat server wouldn't start as it is unable to write templeton.log (thejas via traviscrawford)
+
+  HCAT-573 Remove version number from WEBHCAT_JAR in webhcat_config.sh (thejas via traviscrawford)
+
+  HCAT-592 webhcat - handle change in hive table/partition not found error (thejas via gates)
+
+  HCAT-586 checkstyle fails every time complaining that it's own header file does not have the proper header (gates)
+
   HCAT-580 Optimizations in HCAT-538 break e2e tests (daijy via gates)
 
   HCAT-583 e2e tests do not build (gates)
