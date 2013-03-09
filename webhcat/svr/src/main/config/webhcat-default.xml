@@ -39,13 +39,13 @@
 
   <property>
     <name>templeton.jar</name>
-    <value>${env.TEMPLETON_HOME}/templeton-0.1.0-dev.jar</value>
+    <value>${env.TEMPLETON_HOME}/share/webhcat/svr/webhcat-0.6.0-SNAPSHOT.jar</value>
     <description>The path to the Templeton jar file.</description>
   </property>
 
   <property>
     <name>templeton.libjars</name>
-    <value>${env.TEMPLETON_HOME}/lib/zookeeper-3.3.4.jar</value>
+    <value>${env.TEMPLETON_HOME}/share/webhcat/svr/lib/zookeeper-3.4.3.jar</value>
     <description>Jars to add to the classpath.</description>
   </property>
 
@@ -61,7 +61,7 @@
 
   <property>
     <name>templeton.override.enabled</name>
-    <value>true</value>
+    <value>false</value>
     <description>
       Enable the override path in templeton.override.jars
     </description>
@@ -81,13 +81,13 @@
 
   <property>
     <name>templeton.pig.archive</name>
-    <value>hdfs:///user/templeton/pig-0.9.2.tar.gz</value>
+    <value>hdfs:///apps/templeton/pig-0.10.1.tar.gz</value>
     <description>The path to the Pig archive.</description>
   </property>
 
   <property>
     <name>templeton.pig.path</name>
-    <value>pig-0.9.2.tar.gz/pig-0.9.2/bin/pig</value>
+    <value>pig-0.10.1.tar.gz/pig-0.10.1/bin/pig</value>
     <description>The path to the Pig executable.</description>
   </property>
 
@@ -99,13 +99,13 @@
 
   <property>
     <name>templeton.hive.archive</name>
-    <value>hdfs:///user/templeton/hcatalog-0.3.0.tar.gz</value>
+    <value>hdfs:///apps/templeton/hive-0.10.0.tar.gz</value>
     <description>The path to the Hive archive.</description>
   </property>
 
   <property>
     <name>templeton.hive.path</name>
-    <value>hcatalog-0.3.0.tar.gz/hcatalog-0.3.0/bin/hive</value>
+    <value>hive-0.10.0.tar.gz/hive-0.10.0/bin/hive</value>
     <description>The path to the Hive executable.</description>
   </property>
 
@@ -145,8 +145,23 @@
   </property>
 
   <property>
+    <name>templeton.controller.mr.child.opts</name>
+    <value>-server -Xmx256m -Djava.net.preferIPv4Stack=true</value>
+    <description>Java options to be passed to templeton controller map task.
+        The default value of mapreduce child "-Xmx" (heap memory limit)
+        might be close to what is allowed for a map task.
+        Even if templeton  controller map task does not need much 
+        memory, the jvm (with -server option?)
+        allocates the max memory when it starts. This along with the 
+        memory used by pig/hive client it starts can end up exceeding
+        the max memory configured to be allowed for a map task
+        Use this option to set -Xmx to lower value
+    </description>
+  </property>
+
+  <property>
     <name>templeton.exec.envs</name>
-    <value>HADOOP_PREFIX,HADOOP_HOME,JAVA_HOME</value>
+    <value>HADOOP_PREFIX,HADOOP_HOME,JAVA_HOME,HIVE_HOME</value>
     <description>The environment variables passed through to exec.</description>
   </property>
 

@@ -21,6 +21,7 @@ package org.apache.hcatalog.templeton;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -39,11 +40,11 @@ import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
  *
  * The Templeton specific configuration is split into two layers
  *
- * 1. templeton-default.xml - All the configuration variables that
+ * 1. webhcat-default.xml - All the configuration variables that
  *    Templeton needs.  These are the defaults that ship with the app
  *    and should only be changed be the app developers.
  *
- * 2. templeton-site.xml - The (possibly empty) configuration that the
+ * 2. webhcat-site.xml - The (possibly empty) configuration that the
  *    system administrator can set variables for their Hadoop cluster.
  *
  * The configuration files are loaded in this order with later files
@@ -62,7 +63,7 @@ import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
  */
 public class AppConfig extends Configuration {
     public static final String[] HADOOP_CONF_FILENAMES = {
-        "core-default.xml", "core-site.xml", "mapred-default.xml", "mapred-site.xml"
+        "core-default.xml", "core-site.xml", "mapred-default.xml", "mapred-site.xml", "hdfs-site.xml"
     };
 
     public static final String[] HADOOP_PREFIX_VARS = {
@@ -72,8 +73,8 @@ public class AppConfig extends Configuration {
     public static final String TEMPLETON_HOME_VAR = "TEMPLETON_HOME";
 
     public static final String[] TEMPLETON_CONF_FILENAMES = {
-        "templeton-default.xml",
-        "templeton-site.xml"
+        "webhcat-default.xml",
+        "webhcat-site.xml"
     };
 
     public static final String PORT                = "templeton.port";
@@ -95,6 +96,9 @@ public class AppConfig extends Configuration {
     public static final String TEMPLETON_JAR_NAME  = "templeton.jar";
     public static final String OVERRIDE_JARS_NAME  = "templeton.override.jars";
     public static final String OVERRIDE_JARS_ENABLED = "templeton.override.enabled";
+    public static final String TEMPLETON_CONTROLLER_MR_CHILD_OPTS 
+        = "templeton.controller.mr.child.opts";
+    
     public static final String KERBEROS_SECRET     = "templeton.kerberos.secret";
     public static final String KERBEROS_PRINCIPAL  = "templeton.kerberos.principal";
     public static final String KERBEROS_KEYTAB     = "templeton.kerberos.keytab";
@@ -103,12 +107,16 @@ public class AppConfig extends Configuration {
         = "templeton.callback.retry.interval";
     public static final String CALLBACK_RETRY_NAME
         = "templeton.callback.retry.attempts";
+    
+    //Hadoop property names (set by templeton logic)
     public static final String HADOOP_END_INTERVAL_NAME = "job.end.retry.interval";
     public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
     public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
     public static final String HADOOP_SPECULATIVE_NAME
         = "mapred.map.tasks.speculative.execution";
+    public static final String HADOOP_CHILD_JAVA_OPTS = "mapred.child.java.opts";
 
+    
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
     public AppConfig() {
@@ -177,7 +185,12 @@ public class AppConfig extends Configuration {
     public String kerberosSecret()   { return get(KERBEROS_SECRET); }
     public String kerberosPrincipal(){ return get(KERBEROS_PRINCIPAL); }
     public String kerberosKeytab()   { return get(KERBEROS_KEYTAB); }
+    public String controllerMRChildOpts() { 
+        return get(TEMPLETON_CONTROLLER_MR_CHILD_OPTS); 
+    }
+    
 
+    
     public String[] overrideJars() {
         if (getBoolean(OVERRIDE_JARS_ENABLED, true))
             return getStrings(OVERRIDE_JARS_NAME);
